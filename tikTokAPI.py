@@ -67,12 +67,11 @@ class TikTok:
                 added_sound_music_info[tag] = response_video["added_sound_music_info"][tag]
 
             author = {}
-            author_tags = ['follower_count']
+            author_tags = ['follower_count', 'nickname', 'search_user_name', 'following_count', 'uid']
 
             for tag in author_tags:
                 author[tag] = response_video["author"][tag]
 
-            author_user_id = response_video["author_user_id"]
             create_time = response_video["create_time"]
             desc = response_video["desc"]
             desc_language = response_video["desc_language"]
@@ -85,31 +84,39 @@ class TikTok:
 
 
             statistics = {}
-            statistics_tags = ['aweme_id', 'collect_count', 'comment_count', 
+            statistics_tags = ['collect_count', 'comment_count', 
                                'digg_count', 'download_count', 'forward_count', 'play_count', 
                                'share_count', 'whatsapp_share_count']
             
             for tag in statistics_tags:
                 statistics[tag] = response_video['statistics'][tag]
 
+            links_json = []
             video = {}
             video_tags = ['download_addr', 'duration']
             for tag in video_tags:
                 if tag == 'download_addr':
-                    video[tag] = response_video['video'][tag]['url_list']
+                    if response_video['video'][tag]['url_list'] is not None:
+                        for link in response_video['video'][tag]['url_list']:
+                            links_json.append({'url': link})
                 else:
                     video[tag] = response_video['video'][tag]
 
-            text_extra = response_video['text_extra']
+            text_extra = []
+            if response_video['text_extra']  is not None:
+                for hashtag in response_video['text_extra']:
+                    text_extra.append({'hashtag_id': hashtag['hashtag_id'], 'hashtag_name': hashtag['hashtag_name']})
+            
+            # text_extra = response_video['text_extra']
             aweme_id = response_video['aweme_id']
 
             print(aweme_id)
 
             
-            self.video_dictionary[aweme_id] = {'added_sound_music_info': added_sound_music_info, 'author': author, 'author_user_id': author_user_id,
+            self.video_dictionary[aweme_id] = {'added_sound_music_info': [added_sound_music_info], 'author': [author],
                                                'create_time': create_time, 'desc': desc, 'desc_language': desc_language,
-                                               'share_info': share_info, 'statistics': statistics,
-                                               'video': video, 'text_extra': text_extra}
+                                               'share_info': [share_info], 'statistics': [statistics],
+                                               'video': [video], 'text_extra': text_extra, 'aweme_id': aweme_id, 'download_addr': links_json}
             print("added to dic")
             
         with open("response.json", "w") as outfile:
