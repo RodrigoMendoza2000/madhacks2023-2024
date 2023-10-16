@@ -119,8 +119,8 @@ class TikTok:
                                                'video': [video], 'text_extra': text_extra, 'aweme_id': aweme_id, 'download_addr': links_json}
             print("added to dic")
             
-        with open("response.json", "w") as outfile:
-            json.dump(self.video_dictionary, outfile, indent=4)
+        """with open("response.json", "w") as outfile:
+            json.dump(self.video_dictionary, outfile, indent=4)"""
         self.total_number = len(self.video_dictionary)
 
 
