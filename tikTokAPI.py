@@ -105,7 +105,8 @@ class TikTok:
             text_extra = []
             if response_video['text_extra']  is not None:
                 for hashtag in response_video['text_extra']:
-                    text_extra.append({'hashtag_id': hashtag['hashtag_id'], 'hashtag_name': hashtag['hashtag_name']})
+                    if "hashtag_id" in hashtag and "hashtag_name" in hashtag:
+                        text_extra.append({'hashtag_id': hashtag['hashtag_id'], 'hashtag_name': hashtag['hashtag_name']})
             
             # text_extra = response_video['text_extra']
             aweme_id = response_video['aweme_id']
