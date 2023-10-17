@@ -9,7 +9,7 @@ class OracleDatabase:
 
     def __init__(self):
         self.lib_dir = os.environ.get("LIB_DIR")
-        cx_Oracle.init_oracle_client(lib_dir=self.lib_dir)
+        #cx_Oracle.init_oracle_client(lib_dir=self.lib_dir)
         self.con = cx_Oracle.connect(user=os.environ.get("SCHEMA_USERNAME"), password=os.environ.get(
             "SCHEMA_PASSWORD"), dsn=os.environ.get("SCHEMA_DSN"))
         self.tiktok = TikTok()

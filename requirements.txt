@@ -1,0 +1,3 @@
+cx_Oracle
+uvicorn[standard]
+fastapi
