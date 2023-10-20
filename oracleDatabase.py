@@ -3,7 +3,8 @@ import cx_Oracle
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
+from io import BytesIO
+import requests
 
 class OracleDatabase:
 
@@ -22,6 +23,8 @@ class OracleDatabase:
         cursor = self.con.cursor()
 
         for key, value in dictionary.items():
+
+
             value = str(value).replace("'", "''")
             query = f"""
                 
@@ -44,10 +47,59 @@ class OracleDatabase:
             except:
                 pass
             self.con.commit()
+
+            query = f"""
+                DECLARE
+                BEGIN
+                INSERT INTO VIDEO_BLOB VALUES ('{key}', empty_blob(), 'video/mp4', '{key}.mp4');
+                EXCEPTION WHEN DUP_VAL_ON_INDEX
+                THEN NULL;
+                END;
+            """
+
+            try:
+                cursor.execute(query)
+            except:
+                pass
+            self.con.commit()
+
+            select_query = f"""
+                SELECT (SELECT URL FROM VIDEO_URL WHERE AWEME_ID = '{key}' AND URL LIKE '%api16%' FETCH FIRST 1 ROWS ONLY) AS video_ur, DOWNLOADED_VIDEO FROM VIDEO_BLOB WHERE aweme_id = '{key}'
+                FOR UPDATE
+
+            """
+            cursor.execute(select_query)
+
+            cursor_fetch = cursor.fetchall()
+
+            for row in cursor_fetch:
+                (url, blob,) = row
+
+                request = requests.get(url=url)
+                if request.status_code == 200:
+                    video_mp4 = request.content
+                else:
+                    pass
+
+                video_mp4_stream = BytesIO(video_mp4)
+                print(len(video_mp4))
+                offset = 1
+                num_bytes_in_chunk = 65536
+                while True:
+                    data = video_mp4_stream.read(num_bytes_in_chunk)
+                    if data:
+                        blob.write(data, offset)
+                    if len(data) < num_bytes_in_chunk:
+                        break
+                    offset += len(data)
+
+            self.con.commit()
+            
+
         
         cursor.close()
 
 
 if __name__ == "__main__":
     oracle = OracleDatabase()
-    oracle.insertTikTok(keyword='oracle apex', count=10)
+    oracle.insertTikTok(keyword='oracle apex', count=1)
