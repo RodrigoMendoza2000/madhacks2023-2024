@@ -50,4 +50,4 @@ class OracleDatabase:
 
 if __name__ == "__main__":
     oracle = OracleDatabase()
-    oracle.insertTikTok(keyword='water park', count=10)
+    oracle.insertTikTok(keyword='oracle apex', count=10)

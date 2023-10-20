@@ -63,14 +63,16 @@ class TikTok:
             
             added_sound_music_info = {}
             added_sound_music_info_tags = ['author', 'duration', 'title', 'audition_duration', 'id']
-            for tag in added_sound_music_info_tags:
-                added_sound_music_info[tag] = response_video["added_sound_music_info"][tag]
+            if response_video["added_sound_music_info"]  is not None: 
+                for tag in added_sound_music_info_tags:
+                    added_sound_music_info[tag] = response_video["added_sound_music_info"][tag]
 
             author = {}
             author_tags = ['follower_count', 'nickname', 'search_user_name', 'following_count', 'uid']
 
-            for tag in author_tags:
-                author[tag] = response_video["author"][tag]
+            if response_video["author"]  is not None: 
+                for tag in author_tags:
+                    author[tag] = response_video["author"][tag]
 
             create_time = response_video["create_time"]
             desc = response_video["desc"]
