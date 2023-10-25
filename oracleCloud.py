@@ -47,6 +47,7 @@ class OracleCloud:
             print(self.transcription_job.data)
             
     def process_transcribed_jobs(self):
+        print('starting getting transcriptions')
         for i in range(len(self.transcriptions_to_be_processed)):
             transcription_tasks = self.speech_client.list_transcription_tasks(self.transcriptions_to_be_processed[i])
             try:

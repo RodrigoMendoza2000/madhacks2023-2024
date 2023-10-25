@@ -109,6 +109,7 @@ class OracleDatabase:
         
         cursor.close()
         
+        print(self.oracle_cloud.transcriptions_to_be_processed)
         self.oracle_cloud.process_transcribed_jobs()
 
 
