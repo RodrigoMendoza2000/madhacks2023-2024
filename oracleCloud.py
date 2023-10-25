@@ -48,8 +48,10 @@ class OracleCloud:
             
     def process_transcribed_jobs(self):
         print('starting getting transcriptions')
+        aweme_transcript = {}
         for i in range(len(self.transcriptions_to_be_processed)):
             transcription_tasks = self.speech_client.list_transcription_tasks(self.transcriptions_to_be_processed[i])
+            
             transcription_job = self.speech_client.get_transcription_job(self.transcriptions_to_be_processed[i])
             try:
                 if transcription_job.data.lifecycle_state == 'SUCCEEDED':
@@ -57,12 +59,15 @@ class OracleCloud:
                     for task in range(len(transcription_tasks.data.items)):
                         transcription_task = self.speech_client.get_transcription_task(self.transcriptions_to_be_processed[i], transcription_tasks.data.items[task].id)
                         object_name = transcription_task.data.output_location.object_names[0]
-                        print(self.get_transcript_by_name(object_name))
+                        aweme_transcript[transcription_task.data.display_name.split('.')[0]] = self.get_transcript_by_name(object_name)
                     self.transcriptions_to_be_processed.pop(i)
                 else:
                     continue
+                
             except Exception as e:
                 print(e)
+                continue
+        return aweme_transcript
                 
     def get_transcript_by_name(self, name):
         object_list = self.object_storage_client.get_object(namespace_name=self.bucket_namespace, bucket_name=self.bucket_name, object_name=name)

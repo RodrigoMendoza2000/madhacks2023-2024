@@ -16,6 +16,28 @@ class OracleDatabase:
             "SCHEMA_PASSWORD"), dsn=os.environ.get("SCHEMA_DSN"))
         self.tiktok = TikTok()
         self.oracle_cloud = OracleCloud()
+    
+    def updateTranscript(self, transcript_dictionary):
+        cursor = self.con.cursor()
+        
+        for key, value in transcript_dictionary.items():
+            
+            query = f"""
+            declare
+            l_transcript CLOB;
+            BEGIN
+            l_transcript := {value};
+            update video SET transcript = l_transcript WHERE aweme_id = {key};
+            
+            END;
+            """
+            try:
+                cursor.execute(query)
+            except:
+                pass
+            self.con.commit()
+            
+        cursor.close()
 
     def insertTikTok(self, keyword, count=30, offset=0, sort_type=0, publish_time=30):
         self.tiktok.search(keyword, count=count, offset=offset,
@@ -109,8 +131,8 @@ class OracleDatabase:
         
         cursor.close()
         
-        print(self.oracle_cloud.transcriptions_to_be_processed)
-        self.oracle_cloud.process_transcribed_jobs()
+        transcript_dictionary = self.oracle_cloud.process_transcribed_jobs()
+        self.updateTranscript(transcript_dictionary=transcript_dictionary)
 
 
 if __name__ == "__main__":
