@@ -33,8 +33,8 @@ class OracleDatabase:
             """
             try:
                 cursor.execute(query)
-            except:
-                pass
+            except Exception as e:
+                print(e)
             self.con.commit()
             
         cursor.close()
