@@ -24,7 +24,8 @@ class OracleDatabase:
 
         cursor = self.con.cursor()
 
-        list_videos = [str(key)+'.mp4' for key, value in dictionary.keys()]
+        list_videos = [str(key)+'.mp4' for key, value in dictionary.items()]
+        
         for key, value in dictionary.items():
 
             value = str(value).replace("'", "''")
