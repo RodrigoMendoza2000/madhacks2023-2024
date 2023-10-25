@@ -19,6 +19,7 @@ class OracleDatabase:
     
     def updateTranscript(self, transcript_dictionary):
         cursor = self.con.cursor()
+        print(transcript_dictionary)
         
         for key, value in transcript_dictionary.items():
             
@@ -31,11 +32,13 @@ class OracleDatabase:
             
             END;
             """
+            print(query)
             try:
                 cursor.execute(query)
             except Exception as e:
                 print(e)
             self.con.commit()
+            print("commited")
             
         cursor.close()
 
