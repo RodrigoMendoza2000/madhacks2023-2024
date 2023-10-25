@@ -108,6 +108,8 @@ class OracleDatabase:
         self.oracle_cloud.create_transcribe_job('pythonoracleapex', 'pythonoracleapex', '', list_videos)
         
         cursor.close()
+        
+        self.oracle_cloud.process_transcribed_jobs()
 
 
 if __name__ == "__main__":
