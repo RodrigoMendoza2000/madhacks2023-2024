@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from io import BytesIO
 import requests
+from oracleCloud import OracleCloud
 
 class OracleDatabase:
 
@@ -14,6 +15,7 @@ class OracleDatabase:
         self.con = cx_Oracle.connect(user=os.environ.get("SCHEMA_USERNAME"), password=os.environ.get(
             "SCHEMA_PASSWORD"), dsn=os.environ.get("SCHEMA_DSN"))
         self.tiktok = TikTok()
+        self.oracle_cloud = OracleCloud()
 
     def insertTikTok(self, keyword, count=30, offset=0, sort_type=0, publish_time=30):
         self.tiktok.search(keyword, count=count, offset=offset,
@@ -23,7 +25,6 @@ class OracleDatabase:
         cursor = self.con.cursor()
 
         for key, value in dictionary.items():
-
 
             value = str(value).replace("'", "''")
             query = f"""
@@ -76,8 +77,13 @@ class OracleDatabase:
                 (url, blob,) = row
 
                 request = requests.get(url=url)
+                
                 if request.status_code == 200:
                     video_mp4 = request.content
+                    
+                    print('adding to OCI')
+                    self.oracle_cloud.insert_into_bucket(file_stream=video_mp4, name=key)
+                    print('added to OCI')
                 else:
                     pass
 
@@ -85,6 +91,7 @@ class OracleDatabase:
                 print(len(video_mp4))
                 offset = 1
                 num_bytes_in_chunk = 65536
+                print('adding to blob')
                 while True:
                     data = video_mp4_stream.read(num_bytes_in_chunk)
                     if data:
@@ -92,6 +99,7 @@ class OracleDatabase:
                     if len(data) < num_bytes_in_chunk:
                         break
                     offset += len(data)
+                print('added to blob')
 
             self.con.commit()
             
