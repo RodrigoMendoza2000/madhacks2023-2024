@@ -27,14 +27,14 @@ class OracleDatabase:
             declare
             l_transcript CLOB;
             BEGIN
-            l_transcript := {value};
+            l_transcript := :transcript;
             update video SET transcript = l_transcript WHERE aweme_id = {key};
             
             END;
             """
             print(query)
             try:
-                cursor.execute(query)
+                cursor.execute(query, transcript=value)
             except Exception as e:
                 print(e)
             self.con.commit()
