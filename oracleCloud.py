@@ -50,8 +50,10 @@ class OracleCloud:
         print('starting getting transcriptions')
         for i in range(len(self.transcriptions_to_be_processed)):
             transcription_tasks = self.speech_client.list_transcription_tasks(self.transcriptions_to_be_processed[i])
+            transcription_job = self.speech_client.get_transcription_job(self.transcriptions_to_be_processed[i])
             try:
-                if transcription_tasks.data:
+                if transcription_job.data.lifecycle_state == 'SUCCEEDED':
+                    #print(transcription_tasks.data)
                     for task in range(len(transcription_tasks.data.items)):
                         transcription_task = self.speech_client.get_transcription_task(self.transcriptions_to_be_processed[i], transcription_tasks.data.items[task].id)
                         object_name = transcription_task.data.output_location.object_names[0]
@@ -95,8 +97,8 @@ for o in object_list.data.objects:
     print(o.name)"""
 if __name__ == '__main__':
     speech = OracleCloud()
-    #speech.transcriptions_to_be_processed.append('ocid1.aispeechtranscriptionjob.oc1.mx-queretaro-1.amaaaaaa5g4nx6qaauh23t7sz3jfagtkkkm6halmy2ct5lrwrr7ik4jbrfvq')
-    #speech.process_transcribed_jobs()
+    speech.transcriptions_to_be_processed.append('ocid1.aispeechtranscriptionjob.oc1.mx-queretaro-1.amaaaaaa5g4nx6qazyqpko5hsrnzt23vsqxgcpnxiiwu7tfxufzmxwjiucoa')
+    speech.process_transcribed_jobs()
     #item = 'pythoncode/job-amaaaaaa5g4nx6qanvjq4ywkq4eovudepd3xcb3mwfatcvu7b2i7zdirvpga/axs30owyng21_tiktok_tiktoktext.mp4.json'
     #speech.get_bucket_item(item)
     #request = requests.get('https://v16m-default.akamaized.net/f0026ecefc9ebddaced812abcb55de7d/65399b2a/video/tos/maliva/tos-maliva-ve-0068c799-us/oM8hQEVLzEob0kLCABfQSZRenBt9lDDIhigXEJ/?a=0&ch=0&cr=0&dr=0&er=0&cd=0%7C0%7C1%7C0&cv=1&br=616&bt=308&bti=OTg7QC0wM2A%3D&cs=0&ds=3&ft=iJOG.y7oZZv0PD1K3ZVxg9wA.vDjkEeC~&mime_type=video_mp4&qs=0&rc=M2YzPDM7aTZmZmZkaGk0NkBpMzo3b2U6Zmk3bjMzZzczNEBfNDZgY2FjXl4xLy4vYzIwYSNuMHAycjRfLmZgLS1kMS9zcw%3D%3D&l=202310251646242AD1CC376E791274D97B&btag=e00090000')
