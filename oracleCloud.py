@@ -50,17 +50,18 @@ class OracleCloud:
         print('starting getting transcriptions')
         aweme_transcript = {}
         for i in range(len(self.transcriptions_to_be_processed)):
-            transcription_tasks = self.speech_client.list_transcription_tasks(self.transcriptions_to_be_processed[i])
+            print(i)
+            transcription_tasks = self.speech_client.list_transcription_tasks(self.transcriptions_to_be_processed[0])
             
-            transcription_job = self.speech_client.get_transcription_job(self.transcriptions_to_be_processed[i])
+            transcription_job = self.speech_client.get_transcription_job(self.transcriptions_to_be_processed[0])
             try:
                 if transcription_job.data.lifecycle_state == 'SUCCEEDED':
                     #print(transcription_tasks.data)
                     for task in range(len(transcription_tasks.data.items)):
-                        transcription_task = self.speech_client.get_transcription_task(self.transcriptions_to_be_processed[i], transcription_tasks.data.items[task].id)
+                        transcription_task = self.speech_client.get_transcription_task(self.transcriptions_to_be_processed[0], transcription_tasks.data.items[task].id)
                         object_name = transcription_task.data.output_location.object_names[0]
                         aweme_transcript[transcription_task.data.display_name.split('.')[0]] = self.get_transcript_by_name(object_name)
-                    self.transcriptions_to_be_processed.pop(i)
+                    self.transcriptions_to_be_processed.pop(0)
                 else:
                     continue
                 
@@ -102,7 +103,9 @@ for o in object_list.data.objects:
     print(o.name)"""
 if __name__ == '__main__':
     speech = OracleCloud()
-    speech.transcriptions_to_be_processed.append('ocid1.aispeechtranscriptionjob.oc1.mx-queretaro-1.amaaaaaa5g4nx6qazyqpko5hsrnzt23vsqxgcpnxiiwu7tfxufzmxwjiucoa')
+    speech.transcriptions_to_be_processed.append('ocid1.aispeechtranscriptionjob.oc1.mx-queretaro-1.amaaaaaa5g4nx6qadrgcs4gub4jkqcb6lvk7zxcqoietcrvzyl4seep5q53a')
+    speech.transcriptions_to_be_processed.append('ocid1.aispeechtranscriptionjob.oc1.mx-queretaro-1.amaaaaaa5g4nx6qafe26d5s5b7icdajjdionb56qollaqa3fz7u2gqhw7riq')
+
     print(speech.process_transcribed_jobs())
     #item = 'pythoncode/job-amaaaaaa5g4nx6qanvjq4ywkq4eovudepd3xcb3mwfatcvu7b2i7zdirvpga/axs30owyng21_tiktok_tiktoktext.mp4.json'
     #speech.get_bucket_item(item)

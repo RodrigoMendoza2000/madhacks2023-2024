@@ -140,4 +140,6 @@ class OracleDatabase:
 
 if __name__ == "__main__":
     oracle = OracleDatabase()
-    oracle.insertTikTok(keyword='oracle apex', count=1)
+    oracle.insertTikTok(keyword='oracle apex', count=2)
+    print(oracle.oracle_cloud.transcriptions_to_be_processed)
+    oracle.insertTikTok(keyword='oracle apex', count=2)
