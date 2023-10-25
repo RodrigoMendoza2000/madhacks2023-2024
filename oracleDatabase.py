@@ -24,6 +24,7 @@ class OracleDatabase:
 
         cursor = self.con.cursor()
 
+        list_videos = [str(key)+'.mp4' for key, value in dictionary.keys()]
         for key, value in dictionary.items():
 
             value = str(value).replace("'", "''")
@@ -103,7 +104,7 @@ class OracleDatabase:
 
             self.con.commit()
             
-
+        self.oracle_cloud.create_transcribe_job('pythonoracleapex', 'pythonoracleapex', '', list_videos)
         
         cursor.close()
 
