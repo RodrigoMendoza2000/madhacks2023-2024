@@ -22,6 +22,7 @@ class OracleCloud:
         self.bucket_name = os.environ.get("OCI_BUCKET_NAME")
         self.transcriptions_to_be_processed = []
         self.object_storage_client = oci.object_storage.ObjectStorageClient(self.config)
+        self.text_client = oci.ai_language.AIServiceLanguageClient(self.config)
 
     # Begin the job to transcribe the files in the input bucket that match the file list parameter
     def create_transcribe_job(
@@ -143,18 +144,32 @@ class OracleCloud:
         else:
             for i in bucket_response.data.objects:
                 item_list.append(i.name)
+                
+    def classify_text(self, text):
+        batch_response = self.text_client.batch_detect_language_key_phrases(
+            batch_detect_language_key_phrases_details=oci.ai_language.models.BatchDetectLanguageTextClassificationDetails(
+                documents=[
+                    oci.ai_language.models.TextDocument(
+                        key='1',
+                        text="Viva amiga line forward pukki party is not enough just to change your color a little bit. See old like a rudge. You are a peach you remember love of loud read well, pick a tooth awesome if you can get people to guess which pokemon you are just I facial expressions are copying its shape you'll make big points. Wow, I think you get end up one and no, they can't back again. But you artillery to and what else make a beta oh yeah, a zoomer real diving with the sharpedo Scott me that you guys urgency me that."
+                    )
+                ]
+            )
+        )
+        print(batch_response.data)
 
 
 if __name__ == "__main__":
     speech = OracleCloud()
-    speech.transcriptions_to_be_processed.append(
+    
+    """speech.transcriptions_to_be_processed.append(
         "ocid1.aispeechtranscriptionjob.oc1.mx-queretaro-1.amaaaaaa5g4nx6qadrgcs4gub4jkqcb6lvk7zxcqoietcrvzyl4seep5q53a"
     )
     speech.transcriptions_to_be_processed.append(
         "ocid1.aispeechtranscriptionjob.oc1.mx-queretaro-1.amaaaaaa5g4nx6qafe26d5s5b7icdajjdionb56qollaqa3fz7u2gqhw7riq"
-    )
-
-    print(speech.process_transcribed_jobs())
+    )"""
+    speech.classify_text('hola')
+    #print(speech.process_transcribed_jobs())
     # item = 'pythoncode/job-amaaaaaa5g4nx6qanvjq4ywkq4eovudepd3xcb3mwfatcvu7b2i7zdirvpga/axs30owyng21_tiktok_tiktoktext.mp4.json'
     # speech.get_bucket_item(item)
     # request = requests.get('https://v16m-default.akamaized.net/f0026ecefc9ebddaced812abcb55de7d/65399b2a/video/tos/maliva/tos-maliva-ve-0068c799-us/oM8hQEVLzEob0kLCABfQSZRenBt9lDDIhigXEJ/?a=0&ch=0&cr=0&dr=0&er=0&cd=0%7C0%7C1%7C0&cv=1&br=616&bt=308&bti=OTg7QC0wM2A%3D&cs=0&ds=3&ft=iJOG.y7oZZv0PD1K3ZVxg9wA.vDjkEeC~&mime_type=video_mp4&qs=0&rc=M2YzPDM7aTZmZmZkaGk0NkBpMzo3b2U6Zmk3bjMzZzczNEBfNDZgY2FjXl4xLy4vYzIwYSNuMHAycjRfLmZgLS1kMS9zcw%3D%3D&l=202310251646242AD1CC376E791274D97B&btag=e00090000')
