@@ -7,6 +7,7 @@ load_dotenv()
 from io import BytesIO
 import requests
 from oracleCloud import OracleCloud
+from cohereAPI import CohereAPI
 
 
 class OracleDatabase:
@@ -20,10 +21,40 @@ class OracleDatabase:
         )
         self.tiktok = TikTok()
         self.oracle_cloud = OracleCloud()
+        self.cohere_api = CohereAPI()
+
+    def insert_topics(self, aweme_id, prompt):
+        cursor = self.con.cursor()
+        topic_list = self.cohere_api.get_topics(prompt)
+        for topic in topic_list:
+            query = f"""
+                INSERT INTO AWEME_TOPICS VALUES (:aweme_id, :topic);
+            """
+            try:
+                cursor.execute(query, aweme_id = aweme_id, topic=topic)
+            except Exception as e:
+                print(e)
+            self.con.commit()
+            print("commited")
+        cursor.close()
+
+    def insert_summary(self, aweme_id, transcript):
+        summary = self.cohere_api.get_summary(transcript)
+        cursor = self.con.cursor()
+        query = f"""
+            UPDATE video SET summary = :summary WHERE aweme_id = :aweme_id
+        """
+        try:
+            cursor.execute(query, aweme_id = aweme_id, summary=summary)
+        except Exception as e:
+            print(e)
+        self.con.commit()
+        cursor.close()
 
     # get the dictionary of transcripts from OracleCloud class and update the table in the DB
     def updateTranscript(self, transcript_dictionary):
         cursor = self.con.cursor()
+        
         print(transcript_dictionary)
 
         for key, value in transcript_dictionary.items():
@@ -147,6 +178,7 @@ class OracleDatabase:
         transcript_dictionary = self.oracle_cloud.process_transcribed_jobs()
         # Update the video table with the transcription
         self.updateTranscript(transcript_dictionary=transcript_dictionary)
+
 
     def insertTikTok(self, keyword, count=30, offset=0, sort_type=0, publish_time=30):
         self.tiktok.search(
