@@ -40,6 +40,7 @@ class CohereAPI:
 
 if __name__ == '__main__':
     cohereapi = CohereAPI()
-    text = "text"
-    print(cohereapi.get_summary(text))
+    text = "In what's our next move? This is bad on multiple fronts, wait a sec, so if you're here, then that means I'm aware, but something's not right you year."
+    #print(cohereapi.get_summary(text))
+    print(cohereapi.get_topics(text))
     

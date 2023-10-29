@@ -73,8 +73,9 @@ class OracleDatabase:
                 except Exception as e:
                     print(e)
                 self.con.commit()
-                print("commited")
+                print("commited topic")
         except Exception as e:
+            print(e)
             cursor.close()
             raise Exception("Couldnt insert into database")
 
@@ -94,7 +95,7 @@ class OracleDatabase:
             UPDATE video SET summary = :summary WHERE aweme_id = :aweme_id
         """
         try:
-            cursor.execute(query, aweme_id = aweme_id, summary=summary)
+            cursor.execute(query, summary = summary, aweme_id=aweme_id)
             print("commited video summary")
         except Exception as e:
             cursor.close()
