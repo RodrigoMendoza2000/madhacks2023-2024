@@ -26,6 +26,7 @@ class OracleDatabase:
 
     def insert_topics_summary(self):
         to_insert = self.cohere_api.to_process
+        to_be_eliminated = []
         for key, value in to_insert.items():
             print(f"insert topics summary key: {key}, value: {value}")
             if value["topics"] == 0:
@@ -49,7 +50,10 @@ class OracleDatabase:
                 else:
                     value["summary"] = 1
             if value["topics"] == 1 and value["summary"] == 1:
-                to_insert.pop(key)
+                to_be_eliminated.append(key)
+
+        for i in to_be_eliminated:
+            to_insert.pop(i)
 
 
     def insert_topics(self, aweme_id, prompt):
