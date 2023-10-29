@@ -38,7 +38,7 @@ class OracleDatabase:
                 else:
                     value["topics"] = 1
             if value["summary"] == 0:
-                if len(value["summary"]) >= 250:
+                if len(value["transcript"]) >= 250:
                     try:
                         self.insert_summary(key, value["transcript"])
                     except Exception as e:
