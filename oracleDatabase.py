@@ -27,8 +27,10 @@ class OracleDatabase:
     def insert_topics_summary(self):
         to_insert = self.cohere_api.to_process
         for key, value in to_insert.items():
+            print(f"insert topics summary key: {key}, value: {value}")
             if value["topics"] == 0:
                 try:
+                    print("")
                     self.insert_topics(key, value["transcript"])
                 except Exception as e:
                     print(e)
@@ -49,8 +51,10 @@ class OracleDatabase:
 
     def insert_topics(self, aweme_id, prompt):
         cursor = self.con.cursor()
+        print(f"insert topics prompt: {prompt}")
         try:
             topic_list = self.cohere_api.get_topics(prompt)
+            print(f"insert topic topic list: {topic_list}")
         except:
             cursor.close()
             raise Exception("Couldnt get API")
@@ -76,7 +80,9 @@ class OracleDatabase:
     def insert_summary(self, aweme_id, transcript):
         cursor = self.con.cursor()
         try:
+            print(f"insert summary prompt: {transcript}")
             summary = self.cohere_api.get_summary(transcript)
+            print(f"insert summary summary: {summary}")
         except:
             cursor.close()
             raise Exception("Couldnt get API")
@@ -101,7 +107,6 @@ class OracleDatabase:
         transcript_dictionary = self.oracle_cloud.process_transcribed_jobs()
 
         
-        print(transcript_dictionary)
 
         for key, value in transcript_dictionary.items():
             query = f"""
@@ -113,16 +118,16 @@ class OracleDatabase:
             
             END;
             """
-            print(query)
             try:
                 cursor.execute(query, transcript=value)
+                print(f"len of transcript: {len(value)}")
                 # If the transcript is greater than 30 characters
                 if len(value) > 30:
                     self.cohere_api.to_process[key] = {"transcript": value, "topics": 0, "summary": 0}
             except Exception as e:
                 print(e)
             self.con.commit()
-            print("commited")
+            print("commited  transcript")
 
         cursor.close()
 

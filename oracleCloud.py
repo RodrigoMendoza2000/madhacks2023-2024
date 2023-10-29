@@ -70,7 +70,7 @@ class OracleCloud:
             print(self.transcription_job.data)
 
     def process_transcribed_jobs(self):
-        print("starting getting transcriptions")
+        #print("starting getting transcriptions")
         # Do a dictionary where the key is the aweme_id and the value is the transcript
         aweme_transcript = {}
         for i in range(len(self.transcriptions_to_be_processed)):
