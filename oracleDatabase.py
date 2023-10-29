@@ -38,11 +38,14 @@ class OracleDatabase:
                 else:
                     value["topics"] = 1
             if value["summary"] == 0:
-                try:
-                    self.insert_summary(key, value["transcript"])
-                except Exception as e:
-                    print(e)
-                    break
+                if len(value["summary"]) >= 250:
+                    try:
+                        self.insert_summary(key, value["transcript"])
+                    except Exception as e:
+                        print(e)
+                        break
+                    else:
+                        value["summary"] = 1
                 else:
                     value["summary"] = 1
             if value["topics"] == 1 and value["summary"] == 1:
@@ -68,7 +71,7 @@ class OracleDatabase:
                 try:
                     cursor.execute(query, aweme_id = aweme_id, topic=topic)
                 except Exception as e:
-                    pass
+                    print(e)
                 self.con.commit()
                 print("commited")
         except Exception as e:
@@ -94,6 +97,7 @@ class OracleDatabase:
             cursor.execute(query, aweme_id = aweme_id, summary=summary)
         except Exception as e:
             cursor.close()
+            print(e)
             raise Exception("Couldnt insert into database")
         else:
             
