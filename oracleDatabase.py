@@ -13,7 +13,7 @@ from cohereAPI import CohereAPI
 class OracleDatabase:
     def __init__(self):
         self.lib_dir = os.environ.get("LIB_DIR")
-        # cx_Oracle.init_oracle_client(lib_dir=self.lib_dir)
+        cx_Oracle.init_oracle_client(lib_dir=self.lib_dir)
         self.con = cx_Oracle.connect(
             user=os.environ.get("SCHEMA_USERNAME"),
             password=os.environ.get("SCHEMA_PASSWORD"),
@@ -251,7 +251,7 @@ class OracleDatabase:
                 publish_time=publish_time,
             )
             dictionary = self.tiktok.video_dictionary
-            print(f"response len: {len(dict)}")
+            print(f"response len: {len(dictionary)}")
 
             # list of videos to create the transcription job
             list_videos = [str(key) + ".mp4" for key, value in dictionary.items()]
@@ -271,6 +271,6 @@ class OracleDatabase:
 
 if __name__ == "__main__":
     oracle = OracleDatabase()
-    oracle.insertTikTok(keyword="oracle apex", count=2)
-    print(oracle.oracle_cloud.transcriptions_to_be_processed)
-    oracle.insertTikTok(keyword="oracle apex", count=2)
+    # oracle.insertTikTok(keyword="oracle apex", count=2)
+    #print(oracle.oracle_cloud.transcriptions_to_be_processed)
+    oracle.insertTikTok(keyword="gym", count=13)
