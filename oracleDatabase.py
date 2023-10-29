@@ -143,14 +143,14 @@ class OracleDatabase:
 
     def insert_duality_view(self, value):
         cursor = self.con.cursor()
-        value = str(value).replace("'", "''")
+        #value = str(value).replace("'", "''")
         # Insert the data in the duality view
         query = f"""
             
             DECLARE full_text CLOB;
 
             BEGIN
-                full_text := '{value}';
+                full_text := :value;
 
             BEGIN
                 INSERT INTO aweme_dv VALUES (full_text);
@@ -162,7 +162,8 @@ class OracleDatabase:
         """
 
         try:
-            cursor.execute(query)
+            cursor.execute(query, value=value)
+            print('commited DV')
         except Exception as e:
             print(e)
         self.con.commit()
