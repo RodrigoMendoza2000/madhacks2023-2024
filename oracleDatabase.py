@@ -162,7 +162,7 @@ class OracleDatabase:
         """
 
         try:
-            cursor.execute(query, value=value)
+            cursor.execute(query, value=str(value))
             print('commited DV')
         except Exception as e:
             print(e)
@@ -250,11 +250,13 @@ class OracleDatabase:
             publish_time=publish_time,
         )
         dictionary = self.tiktok.video_dictionary
+        print(f"response len: {len(dict)}")
 
         # list of videos to create the transcription job
         list_videos = [str(key) + ".mp4" for key, value in dictionary.items()]
 
         for key, value in dictionary.items():
+            print(f"inserting video: {key}")
             self.insert_duality_view(value=value)
 
             self.insert_empty_blob(key=key)
