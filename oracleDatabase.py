@@ -242,28 +242,31 @@ class OracleDatabase:
 
 
     def insertTikTok(self, keyword, count=30, offset=0, sort_type=0, publish_time=30):
-        self.tiktok.search(
-            keyword,
-            count=count,
-            offset=offset,
-            sort_type=sort_type,
-            publish_time=publish_time,
-        )
-        dictionary = self.tiktok.video_dictionary
-        print(f"response len: {len(dict)}")
+        try:
+            self.tiktok.search(
+                keyword,
+                count=count,
+                offset=offset,
+                sort_type=sort_type,
+                publish_time=publish_time,
+            )
+            dictionary = self.tiktok.video_dictionary
+            print(f"response len: {len(dict)}")
 
-        # list of videos to create the transcription job
-        list_videos = [str(key) + ".mp4" for key, value in dictionary.items()]
+            # list of videos to create the transcription job
+            list_videos = [str(key) + ".mp4" for key, value in dictionary.items()]
 
-        for key, value in dictionary.items():
-            print(f"inserting video: {key}")
-            self.insert_duality_view(value=value)
+            for key, value in dictionary.items():
+                print(f"inserting video: {key}")
+                self.insert_duality_view(value=value)
 
-            self.insert_empty_blob(key=key)
+                self.insert_empty_blob(key=key)
 
-            self.insert_video_blob(key=key)
+                self.insert_video_blob(key=key)
 
-        self.add_transcriptions(list_videos=list_videos)
+            self.add_transcriptions(list_videos=list_videos)
+        except Exception as e:
+            print(e)
 
 
 if __name__ == "__main__":

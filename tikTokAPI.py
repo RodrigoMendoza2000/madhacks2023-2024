@@ -143,4 +143,4 @@ class TikTok:
 
 if __name__ == "__main__":
     tiktok = TikTok()
-    tiktok.search("wine", count=2)
+    tiktok.search("gym", count=30)
