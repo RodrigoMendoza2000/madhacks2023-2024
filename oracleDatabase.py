@@ -83,9 +83,9 @@ class OracleDatabase:
     def insert_summary(self, aweme_id, transcript):
         cursor = self.con.cursor()
         try:
-            print(f"insert summary prompt: {transcript}")
+            #print(f"insert summary prompt: {transcript}")
             summary = self.cohere_api.get_summary(transcript)
-            print(f"insert summary summary: {summary}")
+            #print(f"insert summary summary: {summary}")
         except:
             cursor.close()
             raise Exception("Couldnt get API")
@@ -95,6 +95,7 @@ class OracleDatabase:
         """
         try:
             cursor.execute(query, aweme_id = aweme_id, summary=summary)
+            print("commited video summary")
         except Exception as e:
             cursor.close()
             print(e)
