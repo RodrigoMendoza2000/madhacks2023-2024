@@ -3,6 +3,7 @@ from oracleDatabase import OracleDatabase
 import cohere
 import os
 from dotenv import load_dotenv
+from fastapi_utils.tasks import repeat_every
 load_dotenv()
 
 app = FastAPI()
@@ -26,3 +27,8 @@ async def cohere_generate(prompt):
         return response[0]
     except Exception as e:
         return {"message": f"{e}"}
+    
+@app.on_event("startup")
+@repeat_every(seconds=60)
+def process_transacts():
+    oracle.updateTranscript()

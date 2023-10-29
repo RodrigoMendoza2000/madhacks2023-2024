@@ -52,8 +52,10 @@ class OracleDatabase:
         cursor.close()
 
     # get the dictionary of transcripts from OracleCloud class and update the table in the DB
-    def updateTranscript(self, transcript_dictionary):
+    def updateTranscript(self):
         cursor = self.con.cursor()
+        transcript_dictionary = self.oracle_cloud.process_transcribed_jobs()
+
         
         print(transcript_dictionary)
 
@@ -174,10 +176,6 @@ class OracleDatabase:
         self.oracle_cloud.create_transcribe_job(
             "pythonoracleapex", "pythonoracleapex", "", list_videos
         )
-
-        transcript_dictionary = self.oracle_cloud.process_transcribed_jobs()
-        # Update the video table with the transcription
-        self.updateTranscript(transcript_dictionary=transcript_dictionary)
 
 
     def insertTikTok(self, keyword, count=30, offset=0, sort_type=0, publish_time=30):
