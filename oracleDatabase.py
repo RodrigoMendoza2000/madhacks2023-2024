@@ -66,7 +66,7 @@ class OracleDatabase:
         try:
             for topic in topic_list:
                 query = f"""
-                    INSERT INTO AWEME_TOPICS VALUES (:aweme_id, :topic);
+                    INSERT INTO AWEME_TOPICS VALUES (:aweme_id, :topic)
                 """
                 try:
                     cursor.execute(query, aweme_id = aweme_id, topic=topic)
