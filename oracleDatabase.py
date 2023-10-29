@@ -23,37 +23,81 @@ class OracleDatabase:
         self.oracle_cloud = OracleCloud()
         self.cohere_api = CohereAPI()
 
+
+    def insert_topics_summary(self):
+        to_insert = self.cohere_api.to_process
+        for key, value in to_insert.items():
+            if value["topics"] == 0:
+                try:
+                    self.insert_topics(key, value["transcript"])
+                except Exception as e:
+                    print(e)
+                    break
+                else:
+                    value["topics"] = 1
+            if value["summary"] == 0:
+                try:
+                    self.insert_summary(key, value["transcript"])
+                except Exception as e:
+                    print(e)
+                    break
+                else:
+                    value["summary"] = 1
+            if value["topics"] == 1 and value["summary"] == 1:
+                to_insert.pop(key)
+
+
     def insert_topics(self, aweme_id, prompt):
         cursor = self.con.cursor()
-        topic_list = self.cohere_api.get_topics(prompt)
-        for topic in topic_list:
-            query = f"""
-                INSERT INTO AWEME_TOPICS VALUES (:aweme_id, :topic);
-            """
-            try:
-                cursor.execute(query, aweme_id = aweme_id, topic=topic)
-            except Exception as e:
-                print(e)
-            self.con.commit()
-            print("commited")
-        cursor.close()
+        try:
+            topic_list = self.cohere_api.get_topics(prompt)
+        except:
+            cursor.close()
+            raise Exception("Couldnt get API")
+
+
+        try:
+            for topic in topic_list:
+                query = f"""
+                    INSERT INTO AWEME_TOPICS VALUES (:aweme_id, :topic);
+                """
+                try:
+                    cursor.execute(query, aweme_id = aweme_id, topic=topic)
+                except Exception as e:
+                    pass
+                self.con.commit()
+                print("commited")
+        except Exception as e:
+            cursor.close()
+            raise Exception("Couldnt insert into database")
+
+        
 
     def insert_summary(self, aweme_id, transcript):
-        summary = self.cohere_api.get_summary(transcript)
         cursor = self.con.cursor()
+        try:
+            summary = self.cohere_api.get_summary(transcript)
+        except:
+            cursor.close()
+            raise Exception("Couldnt get API")
+        
         query = f"""
             UPDATE video SET summary = :summary WHERE aweme_id = :aweme_id
         """
         try:
             cursor.execute(query, aweme_id = aweme_id, summary=summary)
         except Exception as e:
-            print(e)
-        self.con.commit()
+            cursor.close()
+            raise Exception("Couldnt insert into database")
+        else:
+            
+            self.con.commit()
         cursor.close()
 
     # get the dictionary of transcripts from OracleCloud class and update the table in the DB
     def updateTranscript(self):
         cursor = self.con.cursor()
+        
         transcript_dictionary = self.oracle_cloud.process_transcribed_jobs()
 
         
@@ -72,6 +116,9 @@ class OracleDatabase:
             print(query)
             try:
                 cursor.execute(query, transcript=value)
+                # If the transcript is greater than 30 characters
+                if len(value) > 30:
+                    self.cohere_api.to_process[key] = {"transcript": value, "topics": 0, "summary": 0}
             except Exception as e:
                 print(e)
             self.con.commit()

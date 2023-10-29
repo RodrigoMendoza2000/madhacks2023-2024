@@ -7,6 +7,7 @@ load_dotenv()
 class CohereAPI:
     def __init__(self):
         self.co = cohere.Client(os.environ.get("COHERE_APIKEY"))
+        self.to_process = {}
     
 
     def get_topics(self, prompt):
@@ -41,3 +42,4 @@ if __name__ == '__main__':
     cohereapi = CohereAPI()
     text = "Bro. This is a pokemon. This is another instance of and filter please do not use it. I. Tell you right now there is kids on this app and also like come on it could have been anything you'll pick a pokemon bro. What is wrong with you you're weird I shouldn't be saying you all but you know the all that made these filters people. Will say oh you make these filters you make these filters no, I, do not and why would I make something like this brawl this? Is just this is too much for the people that are new and somehow don't know what a 777 filter is by. This point pretty much what it is it. Shows a normal picture of that character and pretty much what you do is you tap the screen and if phases into an image of that character but you shouldn't be seen on tiktok but, in this case you shouldn't be seeing it at all because, why do people want to see of pokemon like that I'm burning the image out of my memory just don't use."
     print(cohereapi.get_topics(text))
+    

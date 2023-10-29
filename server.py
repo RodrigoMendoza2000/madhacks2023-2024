@@ -32,3 +32,4 @@ async def cohere_generate(prompt):
 @repeat_every(seconds=60)
 def process_transacts():
     oracle.updateTranscript()
+    oracle.insert_topics_summary()
