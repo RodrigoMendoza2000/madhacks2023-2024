@@ -138,7 +138,7 @@ class TikTok:
 
         """with open("response.json", "w") as outfile:
             json.dump(self.video_dictionary, outfile, indent=4)"""
-        self.total_number = len(self.video_dictionary)
+        #self.total_number = len(self.video_dictionary)
 
 
 if __name__ == "__main__":
