@@ -179,6 +179,7 @@ class OracleDatabase:
                 INSERT INTO VIDEO_BLOB VALUES ('{key}', empty_blob(), 'video/mp4', '{key}.mp4');
                 EXCEPTION WHEN DUP_VAL_ON_INDEX
                 THEN NULL;
+                WHEN OTHERS THEN NULL;
                 END;
             """
 
