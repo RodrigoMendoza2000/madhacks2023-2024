@@ -28,6 +28,13 @@ async def cohere_generate(prompt):
     except Exception as e:
         return {"message": f"{e}"}
     
+@app.post('/tiktok/testpost')
+async def testpost():
+    try:
+        return {"message: good"}
+    except Exception as e:
+        return {"message": f"{e}"}
+    
 @app.on_event("startup")
 @repeat_every(seconds=60)
 def process_transacts():
