@@ -238,9 +238,12 @@ class OracleDatabase:
 
     # Create the transcription jobs from the videos extracted
     def add_transcriptions(self, list_videos):
-        self.oracle_cloud.create_transcribe_job(
-            "pythonoracleapex", "pythonoracleapex", "", list_videos
-        )
+        try:
+            self.oracle_cloud.create_transcribe_job(
+                "pythonoracleapex", "pythonoracleapex", "", list_videos
+            )
+        except Exception as e:
+            print(e)
 
 
     def insertTikTok(self, keyword, count=30, offset=0, sort_type=0, publish_time=30):
