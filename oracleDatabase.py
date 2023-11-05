@@ -192,48 +192,50 @@ class OracleDatabase:
 
     def insert_video_blob(self, key):
         cursor = self.con.cursor()
+        try:
+            select_query = f"""
+                            SELECT (SELECT URL FROM VIDEO_URL WHERE AWEME_ID = '{key}' AND URL LIKE '%api16%' FETCH FIRST 1 ROWS ONLY) AS video_ur, DOWNLOADED_VIDEO FROM VIDEO_BLOB WHERE aweme_id = '{key}'
+                            FOR UPDATE
 
-        select_query = f"""
-                        SELECT (SELECT URL FROM VIDEO_URL WHERE AWEME_ID = '{key}' AND URL LIKE '%api16%' FETCH FIRST 1 ROWS ONLY) AS video_ur, DOWNLOADED_VIDEO FROM VIDEO_BLOB WHERE aweme_id = '{key}'
-                        FOR UPDATE
+                        """
+            cursor.execute(select_query)
 
-                    """
-        cursor.execute(select_query)
+            cursor_fetch = cursor.fetchall()
 
-        cursor_fetch = cursor.fetchall()
+            for row in cursor_fetch:
+                (
+                    url,
+                    blob,
+                ) = row
 
-        for row in cursor_fetch:
-            (
-                url,
-                blob,
-            ) = row
+                request = requests.get(url=url)
 
-            request = requests.get(url=url)
+                if request.status_code == 200:
+                    video_mp4 = request.content
 
-            if request.status_code == 200:
-                video_mp4 = request.content
+                    print("adding to OCI")
+                    self.oracle_cloud.insert_into_bucket(file_stream=video_mp4, name=key)
+                    print("added to OCI")
+                else:
+                    pass
 
-                print("adding to OCI")
-                self.oracle_cloud.insert_into_bucket(file_stream=video_mp4, name=key)
-                print("added to OCI")
-            else:
-                pass
+                video_mp4_stream = BytesIO(video_mp4)
+                print(len(video_mp4))
+                offset = 1
+                num_bytes_in_chunk = 65536
+                print("adding to blob")
+                while True:
+                    data = video_mp4_stream.read(num_bytes_in_chunk)
+                    if data:
+                        blob.write(data, offset)
+                    if len(data) < num_bytes_in_chunk:
+                        break
+                    offset += len(data)
+                print("added to blob")
 
-            video_mp4_stream = BytesIO(video_mp4)
-            print(len(video_mp4))
-            offset = 1
-            num_bytes_in_chunk = 65536
-            print("adding to blob")
-            while True:
-                data = video_mp4_stream.read(num_bytes_in_chunk)
-                if data:
-                    blob.write(data, offset)
-                if len(data) < num_bytes_in_chunk:
-                    break
-                offset += len(data)
-            print("added to blob")
-
-        self.con.commit()
+            self.con.commit()
+        except Exception as e:
+            print(e)
         cursor.close()
 
     # Create the transcription jobs from the videos extracted
