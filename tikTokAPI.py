@@ -76,8 +76,9 @@ class TikTok:
 
             share_info = {}
             share_info_tags = ["share_url"]
-            for tag in share_info_tags:
-                share_info[tag] = response_video["share_info"][tag]
+            if share_info_tags is not None:
+                for tag in share_info_tags:
+                    share_info[tag] = response_video["share_info"][tag]
 
             statistics = {}
             statistics_tags = [
@@ -143,4 +144,4 @@ class TikTok:
 
 if __name__ == "__main__":
     tiktok = TikTok()
-    tiktok.search("gym", count=30)
+    tiktok.search("perro salchicha", count=30)

@@ -9,7 +9,6 @@ import requests
 from oracleCloud import OracleCloud
 from cohereAPI import CohereAPI
 
-
 class OracleDatabase:
     def __init__(self):
         self.lib_dir = os.environ.get("LIB_DIR")
@@ -145,6 +144,7 @@ class OracleDatabase:
         cursor = self.con.cursor()
         #value = str(value).replace("'", "''")
         # Insert the data in the duality view
+
         query = f"""
             
             DECLARE full_text CLOB;
@@ -156,6 +156,7 @@ class OracleDatabase:
                 INSERT INTO aweme_dv VALUES (full_text);
             EXCEPTION WHEN DUP_VAL_ON_INDEX
             THEN NULL;
+            WHEN OTHERS THEN NULL;
             END;
             END;
 
@@ -273,4 +274,4 @@ if __name__ == "__main__":
     oracle = OracleDatabase()
     # oracle.insertTikTok(keyword="oracle apex", count=2)
     #print(oracle.oracle_cloud.transcriptions_to_be_processed)
-    oracle.insertTikTok(keyword="gym", count=13)
+    oracle.insertTikTok(keyword="perro salchicha", count=30)
