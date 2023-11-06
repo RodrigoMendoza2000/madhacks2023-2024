@@ -23,7 +23,7 @@ async def cohere_generate(prompt):
     try:
         response = co.generate(
         model='command',
-        prompt='Hello Cohere,\n\nPlease give me a potential TikTok script that has the following elements:\n\nHashtags: dogs,pokemon\n\nBackground music: Pokemon Theme Song\n\nRelated topics: \n\nSimilar to Tiktoks of tiktoker:',
+        prompt=prompt,
         max_tokens=900,
         temperature=0.9,
         k=0,
