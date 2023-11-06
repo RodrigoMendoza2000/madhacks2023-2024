@@ -40,7 +40,21 @@ class CohereAPI:
 
 if __name__ == '__main__':
     cohereapi = CohereAPI()
-    text = "In what's our next move? This is bad on multiple fronts, wait a sec, so if you're here, then that means I'm aware, but something's not right you year."
+    co = cohere.Client(os.environ.get("COHERE_APIKEY"))
+    try:
+        response = co.generate(
+        model='command',
+        prompt='Write a large TikTok script about the following topics: Pokemon, Videogames',
+        max_tokens=900,
+        temperature=0.9,
+        k=0,
+        stop_sequences=[],
+        return_likelihoods='NONE')
+        print( response[0])
+    except Exception as e:
+        print( {"message": f"{e}"})
+    
+    #text = "In what's our next move? This is bad on multiple fronts, wait a sec, so if you're here, then that means I'm aware, but something's not right you year."
     #print(cohereapi.get_summary(text))
-    print(cohereapi.get_topics(text))
+    #print(cohereapi.get_topics(text))
     
